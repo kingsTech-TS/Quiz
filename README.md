@@ -180,7 +180,7 @@ quiz/
 
 - **Node.js**: v20.0 or higher
 - **Bun**: v1.1 or higher (recommended) or `npm`/`pnpm`/`yarn`
-- **FastAPI Backend (`quiz-BD`)**: Running locally on `http://localhost:8000`
+- **FastAPI Backend (`quiz-BD`)**: `https://quiz-bd-g5de.onrender.com` (or local `http://localhost:8000`)
 
 ### 1. Clone the Repository
 
@@ -199,10 +199,10 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` or `.env` file in the project root:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_API_BASE_URL=https://quiz-bd-g5de.onrender.com
 ```
 
 ### 4. Run Development Server

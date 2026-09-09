@@ -2,7 +2,8 @@ import axios, { AxiosError } from "axios";
 import { getToken, clearToken } from "./auth";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL:
+    process.env.NEXT_PUBLIC_API_BASE_URL || "https://quiz-bd-g5de.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
