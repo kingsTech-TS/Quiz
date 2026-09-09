@@ -169,23 +169,23 @@ export const courseService = {
 
   async getOverallLeaderboard(limit = 10): Promise<LeaderboardEntry[]> {
     try {
-      // 1. Primary: dedicated cross-course top-students endpoint
-      return await this.getTopStudents(limit);
+      // 1. Primary: user-accessible leaderboard route
+      const res = await api.get<any>(`/api/users/leaderboard?limit=${limit}`);
+      const list = Array.isArray(res.data)
+        ? res.data
+        : res.data?.leaderboard || (res.data?.top_students as any[]) || [];
+      return list.map((item: any, idx: number) => ({
+        rank: item.rank || idx + 1,
+        student_name: item.full_name || item.student_name || "Student",
+        matric_number: item.matric_number,
+        score: item.score || 0,
+        percentage: item.percentage || 0,
+        submitted_at: item.submitted_at,
+      }));
     } catch {
-      // 2. Secondary: user-scoped leaderboard route
+      // 2. Secondary: quiz-master top-students route
       try {
-        const res = await api.get<any>(`/api/users/leaderboard?limit=${limit}`);
-        const list = Array.isArray(res.data)
-          ? res.data
-          : res.data?.leaderboard || (res.data?.top_students as any[]) || [];
-        return list.map((item: any, idx: number) => ({
-          rank: item.rank || idx + 1,
-          student_name: item.full_name || item.student_name || "Student",
-          matric_number: item.matric_number,
-          score: item.score || 0,
-          percentage: item.percentage || 0,
-          submitted_at: item.submitted_at,
-        }));
+        return await this.getTopStudents(limit);
       } catch {
         return [];
       }
