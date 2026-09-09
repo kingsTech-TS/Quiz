@@ -111,12 +111,13 @@ export default function StudentQuizPage({
         })
       );
 
-      const result = await quizService.submitQuiz(attempt.id, {
+      const result = await quizService.submitQuiz(courseId, {
         answers: submissions,
       });
 
       toast.success("Examination submitted successfully!");
-      router.push(`/results/${result.attempt_id || attempt.id}`);
+      // Navigate using courseId — the results history API keys entries by course_id
+      router.push(`/results/${courseId}`);
     } catch (err: unknown) {
       toast.error(getApiError(err));
       isSubmittingRef.current = false;

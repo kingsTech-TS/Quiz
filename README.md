@@ -4,7 +4,7 @@
 
 **Next.js 16 • React 19 • TypeScript • Tailwind CSS v4 • Bun • TanStack Query**
 
-_A modern, responsive academic quiz and assessment examination platform built with the BRAIO design system._
+_A modern, responsive academic quiz and assessment examination platform built with the QUZIY design system._
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
@@ -74,7 +74,7 @@ The **Quiz Platform Frontend** is the user-facing web application for an academi
 
 ## 🎨 Design System
 
-The application implements the **BRAIO** design language:
+The application implements the **QUZIY** design language:
 
 - **Card Enclosures**: Clean white cards with `rounded-[28px]` and `rounded-[32px]` containers over a soft neutral background (`#F4F5FA`).
 - **Pill Badges**: Status tags (`rounded-full`) for publication states, verification flags, and GST codes.

@@ -57,3 +57,26 @@ export function useOverallLeaderboard() {
     queryFn: () => courseService.getOverallLeaderboard(),
   });
 }
+
+export function useCourseAttempts(courseId: string) {
+  return useQuery({
+    queryKey: ["course-attempts", courseId],
+    queryFn: () => courseService.getCourseAttempts(courseId),
+    enabled: !!courseId,
+  });
+}
+
+export function useAttemptDetail(attemptId: string) {
+  return useQuery({
+    queryKey: ["attempt-detail", attemptId],
+    queryFn: () => courseService.getAttemptDetail(attemptId),
+    enabled: !!attemptId,
+  });
+}
+
+export function useTopStudents(limit = 10) {
+  return useQuery({
+    queryKey: ["top-students", limit],
+    queryFn: () => courseService.getTopStudents(limit),
+  });
+}

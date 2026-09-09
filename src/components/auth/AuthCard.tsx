@@ -23,7 +23,7 @@ export function AuthCard({
       <div className="text-center mb-6">
         <Link href="/" className="inline-block mb-3">
           <span className="font-black text-2xl tracking-wider text-gray-950 uppercase">
-            BRAIO
+            QUZIY
           </span>
         </Link>
         <h1 className="text-2xl font-extrabold text-gray-950 tracking-tight">

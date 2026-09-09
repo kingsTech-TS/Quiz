@@ -219,7 +219,7 @@ export function RightPanel({ className }: RightPanelProps) {
       ? "Quiz Master / Instructor"
       : "Student";
 
-  const displayName = user?.full_name || "BRAIO";
+  const displayName = user?.full_name || "QUZIY";
 
   return (
     <aside

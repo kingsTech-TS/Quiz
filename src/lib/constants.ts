@@ -63,6 +63,14 @@ export const API_ENDPOINTS = {
     result: (attemptId: string) => `/api/users/results`,
     history: "/api/users/results",
   },
+  attempts: {
+    listForCourse: (courseId: string) =>
+      `/api/quiz-masters/courses/${courseId}/attempts`,
+    detail: (attemptId: string) =>
+      `/api/quiz-masters/attempts/${attemptId}`,
+    topStudents: (limit = 10) =>
+      `/api/quiz-masters/leaderboard/top-students?limit=${limit}`,
+  },
   analytics: {
     quizMaster: "/api/quiz-masters/analytics",
     course: (courseId: string) => `/api/quiz-masters/courses/${courseId}/analytics`,

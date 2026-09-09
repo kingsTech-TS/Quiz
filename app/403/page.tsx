@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ShieldAlert, ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "403 Access Forbidden — BRAIO Academic",
+  title: "403 Access Forbidden — QUZIY Academic",
   description: "You do not have permission to access this resource",
 };
 

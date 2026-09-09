@@ -15,7 +15,7 @@ export function MobileHeader({ onToggleSidebar }: MobileHeaderProps) {
         href="/"
         className="tracking-wider font-black text-xl text-gray-950 uppercase"
       >
-        BRAIO
+        QUZIY
       </Link>
       <button
         type="button"

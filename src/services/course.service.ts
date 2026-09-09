@@ -6,6 +6,8 @@ import type {
   UpdateCourseRequest,
   CourseAnalytics,
   LeaderboardEntry,
+  StudentAttemptSummary,
+  StudentAttemptDetail,
 } from "@/types/course";
 
 export const courseService = {
@@ -138,9 +140,15 @@ export const courseService = {
       total_attempts: d.attempts || 0,
       correct_answers: d.correct_answers || 0,
       incorrect_answers: d.incorrect_answers || 0,
-      highest_score: d.highest_score || 0,
-      average_score: Math.round(d.average_score || 0),
+      highest_score: Math.round(d.highest_score || 0),
+      // average_percentage is the mean percentage score across takers
+      average_score: Math.round(d.average_percentage || 0),
+      // pass_rate approximated from average_percentage
       pass_rate: Math.round(d.average_percentage || 0),
+      // expose raw counts too
+      total_questions: d.total_questions || 0,
+      average_percentage: Math.round(d.average_percentage || 0),
+      lowest_score: Math.round(d.lowest_score || 0),
     };
   },
 
@@ -159,70 +167,58 @@ export const courseService = {
     }));
   },
 
-  async getOverallLeaderboard(): Promise<LeaderboardEntry[]> {
+  async getOverallLeaderboard(limit = 10): Promise<LeaderboardEntry[]> {
     try {
-      const res = await api.get<any>("/api/leaderboard");
-      const list =
-        res.data?.leaderboard || (Array.isArray(res.data) ? res.data : []);
-      if (list.length > 0) {
+      // 1. Primary: dedicated cross-course top-students endpoint
+      return await this.getTopStudents(limit);
+    } catch {
+      // 2. Secondary: user-scoped leaderboard route
+      try {
+        const res = await api.get<any>(`/api/users/leaderboard?limit=${limit}`);
+        const list = Array.isArray(res.data)
+          ? res.data
+          : res.data?.leaderboard || (res.data?.top_students as any[]) || [];
         return list.map((item: any, idx: number) => ({
           rank: item.rank || idx + 1,
           student_name: item.full_name || item.student_name || "Student",
           matric_number: item.matric_number,
           score: item.score || 0,
           percentage: item.percentage || 0,
+          submitted_at: item.submitted_at,
         }));
+      } catch {
+        return [];
       }
-    } catch {
-      // Endpoint might not exist directly, fall through to course leaderboard aggregation
     }
+  },
 
-    try {
-      const coursesRes = await api.get<any[]>(API_ENDPOINTS.courses.list);
-      const courses = coursesRes.data || [];
-      if (!courses || courses.length === 0) return [];
 
-      const leaderboardPromises = courses.slice(0, 5).map(async (c) => {
-        try {
-          const res = await api.get<any>(
-            API_ENDPOINTS.analytics.leaderboard(c.id),
-          );
-          return (
-            res.data?.leaderboard || (Array.isArray(res.data) ? res.data : [])
-          );
-        } catch {
-          return [];
-        }
-      });
+  // Quiz Master — student attempt list for a course
+  async getCourseAttempts(courseId: string): Promise<StudentAttemptSummary[]> {
+    const res = await api.get<StudentAttemptSummary[]>(
+      API_ENDPOINTS.attempts.listForCourse(courseId),
+    );
+    return res.data || [];
+  },
 
-      const allResults = await Promise.all(leaderboardPromises);
-      const flattened = allResults.flat();
+  // Quiz Master — per-question detail for a single attempt
+  async getAttemptDetail(attemptId: string): Promise<StudentAttemptDetail> {
+    const res = await api.get<StudentAttemptDetail>(
+      API_ENDPOINTS.attempts.detail(attemptId),
+    );
+    return res.data;
+  },
 
-      if (flattened.length === 0) return [];
-
-      const studentMap = new Map<string, any>();
-      for (const item of flattened) {
-        const key = item.matric_number || item.student_name || item.full_name;
-        if (!key) continue;
-        const existing = studentMap.get(key);
-        if (!existing || (item.percentage || 0) > (existing.percentage || 0)) {
-          studentMap.set(key, item);
-        }
-      }
-
-      const sorted = Array.from(studentMap.values()).sort(
-        (a, b) => (b.percentage || 0) - (a.percentage || 0),
-      );
-
-      return sorted.slice(0, 10).map((item, idx) => ({
-        rank: idx + 1,
-        student_name: item.full_name || item.student_name || "Student",
-        matric_number: item.matric_number,
-        score: item.score || 0,
-        percentage: item.percentage || 0,
-      }));
-    } catch {
-      return [];
-    }
+  // Quiz Master — overall top-N students leaderboard (cross-course, first-attempt only)
+  async getTopStudents(limit = 10): Promise<LeaderboardEntry[]> {
+    const res = await api.get<any[]>(API_ENDPOINTS.attempts.topStudents(limit));
+    return (res.data || []).map((item: any, idx: number) => ({
+      rank: item.rank || idx + 1,
+      student_name: item.full_name || item.student_name || "Student",
+      matric_number: item.matric_number,
+      score: item.score || 0,
+      percentage: item.percentage || 0,
+      submitted_at: item.submitted_at,
+    }));
   },
 };

@@ -39,7 +39,7 @@ export function Sidebar({ onItemClick, className }: SidebarProps) {
             onClick={onItemClick}
             className="inline-block tracking-wider font-black text-2xl text-gray-950 hover:opacity-90 transition-opacity uppercase"
           >
-            BRAIO
+            QUZIY
           </Link>
         </div>
 

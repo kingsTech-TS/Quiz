@@ -25,6 +25,7 @@ import {
   ArrowRight,
   Trash2,
   CheckCheck,
+  Users,
 } from "lucide-react";
 
 export default function QuizMasterCourseDetailPage({
@@ -303,7 +304,7 @@ export default function QuizMasterCourseDetailPage({
       </div>
 
       {/* Workflow Navigation Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <Link
           href={`/qm/courses/${course.id}/upload`}
           className="p-6 rounded-[28px] bg-white border border-gray-100 hover:border-gray-200 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group"
@@ -314,7 +315,7 @@ export default function QuizMasterCourseDetailPage({
             </div>
             <h4 className="font-extrabold text-base text-gray-950">Upload Document</h4>
             <p className="text-xs text-gray-400 font-medium mt-1.5 leading-relaxed">
-              Extract new questions from PDF, Word syllabus, or exam past papers.
+              Extract new questions from PDF, Word syllabus, or past papers.
             </p>
           </div>
           <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-purple-600">
@@ -331,7 +332,7 @@ export default function QuizMasterCourseDetailPage({
             <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
               <FileQuestion className="w-6 h-6" />
             </div>
-            <h4 className="font-extrabold text-base text-gray-950">Question Bank & Editor</h4>
+            <h4 className="font-extrabold text-base text-gray-950">Question Bank</h4>
             <p className="text-xs text-gray-400 font-medium mt-1.5 leading-relaxed">
               Inspect, add, edit, or remove questions, options, and explanations.
             </p>
@@ -350,13 +351,32 @@ export default function QuizMasterCourseDetailPage({
             <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <h4 className="font-extrabold text-base text-gray-950">AI Verification Center</h4>
+            <h4 className="font-extrabold text-base text-gray-950">AI Verification</h4>
             <p className="text-xs text-gray-400 font-medium mt-1.5 leading-relaxed">
               Verify answer keys and resolve flagged confidence warnings.
             </p>
           </div>
           <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-purple-600">
             <span>Review & Verify</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+
+        <Link
+          href={`/qm/courses/${course.id}/attempts`}
+          className="p-6 rounded-[28px] bg-white border border-gray-100 hover:border-gray-200 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group"
+        >
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+              <Users className="w-6 h-6" />
+            </div>
+            <h4 className="font-extrabold text-base text-gray-950">Student Attempts</h4>
+            <p className="text-xs text-gray-400 font-medium mt-1.5 leading-relaxed">
+              Inspect candidate submissions, scores, and answer sheets.
+            </p>
+          </div>
+          <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-purple-600">
+            <span>View Submissions</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
