@@ -54,9 +54,9 @@ export function RecentAttempts({
       </div>
 
       <div className="divide-y divide-gray-100">
-        {attempts.slice(0, 5).map((attempt) => (
+        {attempts.slice(0, 5).map((attempt, idx) => (
           <div
-            key={attempt.id}
+            key={`${attempt.id || attempt.course_id}-${attempt.submitted_at || idx}`}
             className="py-3 flex items-center justify-between gap-3 text-sm"
           >
             <div className="min-w-0">

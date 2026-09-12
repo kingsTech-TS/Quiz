@@ -9,10 +9,44 @@ export const adminService = {
   },
 
   async getUsers(params?: AdminUsersParams): Promise<AdminUsersResponse> {
-    const res = await api.get<AdminUsersResponse>(API_ENDPOINTS.admin.users, {
-      params,
+    const queryParams: Record<string, any> = {
+      ...params,
+      limit: params?.per_page || 20,
+    };
+    const res = await api.get<any>(API_ENDPOINTS.admin.users, {
+      params: queryParams,
     });
-    return res.data;
+    const raw = res.data;
+    const rawList = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw?.users)
+      ? raw.users
+      : Array.isArray(raw?.data)
+      ? raw.data
+      : [];
+
+    const normalizedUsers = rawList.map((u: any) => ({
+      ...u,
+      id: u.id || u._id || "",
+      role: u.role || "user",
+      phone: u.phone || u.phone_number || "",
+      phone_number: u.phone_number || u.phone || "",
+      gst_courses: u.gst_courses || u.gst_codes || [],
+      gst_codes: u.gst_codes || u.gst_courses || [],
+    }));
+
+    const total = typeof raw?.total === "number" ? raw.total : normalizedUsers.length;
+    const perPage = raw?.per_page ?? raw?.limit ?? params?.per_page ?? 20;
+    const totalPages =
+      raw?.total_pages ?? raw?.pages ?? (Math.ceil(total / perPage) || 1);
+
+    return {
+      users: normalizedUsers,
+      total,
+      page: raw?.page ?? params?.page ?? 1,
+      per_page: perPage,
+      total_pages: totalPages,
+    };
   },
 
   async exportUsers(): Promise<void> {

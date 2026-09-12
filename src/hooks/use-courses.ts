@@ -51,10 +51,17 @@ export function useCourseLeaderboard(courseId: string) {
   });
 }
 
-export function useOverallLeaderboard() {
+export function useOverallLeaderboard(gst?: string) {
   return useQuery({
-    queryKey: ["overall-leaderboard"],
-    queryFn: () => courseService.getOverallLeaderboard(),
+    queryKey: ["overall-leaderboard", gst || "all"],
+    queryFn: () => courseService.getOverallLeaderboard(10, gst),
+  });
+}
+
+export function useLeaderboardByGst(limit = 10) {
+  return useQuery({
+    queryKey: ["leaderboard-by-gst", limit],
+    queryFn: () => courseService.getLeaderboardByGst(limit),
   });
 }
 

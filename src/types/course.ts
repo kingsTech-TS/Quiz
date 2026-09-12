@@ -58,6 +58,7 @@ export interface LeaderboardEntry {
   percentage: number;
   time_taken?: number;
   submitted_at?: string;
+  gst_code?: string;
 }
 
 export interface AttemptAnswerDetail {

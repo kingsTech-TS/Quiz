@@ -167,10 +167,14 @@ export const courseService = {
     }));
   },
 
-  async getOverallLeaderboard(limit = 10): Promise<LeaderboardEntry[]> {
+  async getOverallLeaderboard(limit = 10, gst?: string): Promise<LeaderboardEntry[]> {
     try {
+      const q = new URLSearchParams({ limit: String(limit) });
+      if (gst && gst !== "all") {
+        q.set("gst", gst);
+      }
       // 1. Primary: user-accessible leaderboard route
-      const res = await api.get<any>(`/api/users/leaderboard?limit=${limit}`);
+      const res = await api.get<any>(`/api/users/leaderboard?${q.toString()}`);
       const list = Array.isArray(res.data)
         ? res.data
         : res.data?.leaderboard || (res.data?.top_students as any[]) || [];
@@ -181,15 +185,35 @@ export const courseService = {
         score: item.score || 0,
         percentage: item.percentage || 0,
         submitted_at: item.submitted_at,
+        gst_code: item.gst_code,
       }));
     } catch {
       // 2. Secondary: quiz-master top-students route
       try {
-        return await this.getTopStudents(limit);
+        return await this.getTopStudents(limit, gst);
       } catch {
         return [];
       }
     }
+  },
+
+  async getLeaderboardByGst(limit = 10): Promise<Record<string, LeaderboardEntry[]>> {
+    const res = await api.get<Record<string, any[]>>(`/api/users/leaderboard/by-gst?limit=${limit}`);
+    const out: Record<string, LeaderboardEntry[]> = {};
+    if (res.data && typeof res.data === "object") {
+      for (const [code, items] of Object.entries(res.data)) {
+        out[code] = (items || []).map((item: any, idx: number) => ({
+          rank: item.rank || idx + 1,
+          student_name: item.full_name || item.student_name || "Student",
+          matric_number: item.matric_number,
+          score: item.score || 0,
+          percentage: item.percentage || 0,
+          submitted_at: item.submitted_at,
+          gst_code: item.gst_code || code,
+        }));
+      }
+    }
+    return out;
   },
 
 
@@ -210,8 +234,11 @@ export const courseService = {
   },
 
   // Quiz Master — overall top-N students leaderboard (cross-course, first-attempt only)
-  async getTopStudents(limit = 10): Promise<LeaderboardEntry[]> {
-    const res = await api.get<any[]>(API_ENDPOINTS.attempts.topStudents(limit));
+  async getTopStudents(limit = 10, gst?: string): Promise<LeaderboardEntry[]> {
+    const url = gst && gst !== "all"
+      ? `${API_ENDPOINTS.attempts.topStudents(limit)}&gst=${encodeURIComponent(gst)}`
+      : API_ENDPOINTS.attempts.topStudents(limit);
+    const res = await api.get<any[]>(url);
     return (res.data || []).map((item: any, idx: number) => ({
       rank: item.rank || idx + 1,
       student_name: item.full_name || item.student_name || "Student",

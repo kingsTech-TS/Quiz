@@ -128,7 +128,11 @@ export const quizService = {
 
   async getResult(attemptId: string): Promise<QuizResult | null> {
     const history = await quizService.getHistory();
-    const found = history.find((h) => h.id === attemptId);
+    // Match by unique attempt ID first; fallback to course_id (returns latest attempt for that course)
+    let found = history.find((h) => h.id === attemptId);
+    if (!found) {
+      found = history.find((h) => h.course_id === attemptId);
+    }
     if (!found) return null;
 
     return {
@@ -147,6 +151,10 @@ export const quizService = {
   async getHistory(): Promise<AttemptHistoryItem[]> {
     const res = await api.get<
       Array<{
+        id?: string;
+        _id?: string;
+        attempt_id?: string;
+        session_id?: string;
         course_id: string;
         course_title: string;
         score: number;
@@ -159,16 +167,31 @@ export const quizService = {
       }>
     >(API_ENDPOINTS.quiz.history);
 
-    return (res.data || []).map((row) => ({
-      id: row.course_id,
-      course_id: row.course_id,
-      course_title: row.course_title,
-      score: row.score,
-      percentage: row.percentage,
-      total_questions: row.total,
-      status: "submitted",
-      submitted_at: row.submitted_at,
-      started_at: row.submitted_at,
-    }));
+    const items: AttemptHistoryItem[] = (res.data || []).map((row, idx) => {
+      const uniqueId =
+        row.id ||
+        row._id ||
+        row.attempt_id ||
+        row.session_id ||
+        (row.submitted_at ? `${row.course_id}_${row.submitted_at}` : `${row.course_id}_${idx}`);
+
+      return {
+        id: uniqueId,
+        course_id: row.course_id,
+        course_title: row.course_title,
+        score: row.score,
+        percentage: row.percentage,
+        total_questions: row.total,
+        status: "submitted",
+        submitted_at: row.submitted_at,
+        started_at: row.submitted_at,
+      };
+    });
+
+    return items.sort((a, b) => {
+      const timeA = new Date(a.submitted_at || a.started_at || 0).getTime();
+      const timeB = new Date(b.submitted_at || b.started_at || 0).getTime();
+      return timeB - timeA;
+    });
   },
 };

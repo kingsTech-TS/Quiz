@@ -105,8 +105,8 @@ export function UserTable({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-900">
-                {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50/60 transition-colors">
+                {users.map((u, idx) => (
+                  <tr key={u.id || u.matric_number || `user-${idx}`} className="hover:bg-gray-50/60 transition-colors">
                     <td className="py-4 px-6 font-bold text-gray-950">
                       {u.full_name}
                     </td>
@@ -124,8 +124,8 @@ export function UserTable({
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex flex-wrap gap-1.5">
-                        {u.gst_courses && u.gst_courses.length > 0 ? (
-                          u.gst_courses.map((code) => (
+                        {((u.gst_courses && u.gst_courses.length > 0) || (u.gst_codes && u.gst_codes.length > 0)) ? (
+                          (u.gst_courses?.length ? u.gst_courses : u.gst_codes || []).map((code) => (
                             <span
                               key={code}
                               className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-extrabold uppercase"
@@ -139,7 +139,7 @@ export function UserTable({
                       </div>
                     </td>
                     <td className="py-4 px-6 font-mono text-xs text-gray-500 font-medium">
-                      {u.phone || "—"}
+                      {u.phone || u.phone_number || "—"}
                     </td>
                   </tr>
                 ))}

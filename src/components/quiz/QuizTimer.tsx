@@ -18,12 +18,16 @@ export function QuizTimer({ expiresAt, onExpire, className }: QuizTimerProps) {
   });
 
   const onExpireRef = useRef(onExpire);
+  const hasFiredRef = useRef(false);
 
   useEffect(() => {
     onExpireRef.current = onExpire;
   }, [onExpire]);
 
   useEffect(() => {
+    hasFiredRef.current = false;
+    let timerId: NodeJS.Timeout | null = null;
+
     const calculateTime = () => {
       const expiry = new Date(expiresAt).getTime();
       const now = Date.now();
@@ -31,14 +35,20 @@ export function QuizTimer({ expiresAt, onExpire, className }: QuizTimerProps) {
       setSecondsRemaining(diff);
 
       if (diff <= 0) {
-        onExpireRef.current();
+        if (timerId) clearInterval(timerId);
+        if (!hasFiredRef.current) {
+          hasFiredRef.current = true;
+          onExpireRef.current();
+        }
       }
     };
 
     calculateTime();
-    const interval = setInterval(calculateTime, 1000);
+    timerId = setInterval(calculateTime, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (timerId) clearInterval(timerId);
+    };
   }, [expiresAt]);
 
   const minutes = Math.floor(secondsRemaining / 60);

@@ -18,6 +18,7 @@ export function DashboardLayout({
   allowedRole,
 }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [rightPanelOpen, setRightPanelOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -53,8 +54,11 @@ export function DashboardLayout({
         <Sidebar />
       </div>
 
-      {/* Mobile Top Header */}
-      <MobileHeader onToggleSidebar={() => setMobileOpen(true)} />
+      {/* Mobile / Tablet Top Header */}
+      <MobileHeader
+        onToggleSidebar={() => setMobileOpen(true)}
+        onToggleRightPanel={() => setRightPanelOpen(true)}
+      />
 
       {/* Mobile Sidebar Overlay Drawer */}
       {mobileOpen && (
@@ -72,6 +76,26 @@ export function DashboardLayout({
               <X className="w-5 h-5" />
             </button>
             <Sidebar onItemClick={() => setMobileOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile / Tablet Right Panel Overlay Drawer */}
+      {rightPanelOpen && (
+        <div className="fixed inset-0 z-50 xl:hidden flex justify-end">
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setRightPanelOpen(false)}
+          />
+          <div className="relative w-84 max-w-[90vw] bg-[#F4F5FA] h-full shadow-2xl flex flex-col z-10 p-4 overflow-y-auto animate-in slide-in-from-right duration-200">
+            <button
+              onClick={() => setRightPanelOpen(false)}
+              className="absolute top-4 right-4 p-1.5 text-gray-500 hover:text-gray-900 rounded-xl cursor-pointer bg-white/80 shadow-2xs z-20"
+              aria-label="Close panel"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <RightPanel />
           </div>
         </div>
       )}

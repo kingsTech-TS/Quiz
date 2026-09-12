@@ -61,13 +61,13 @@ export default function StudentResultsHistoryPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-900">
-                {history.map((item) => {
+                {history.map((item, idx) => {
                   const percentage = Math.round(item.percentage);
                   const isPass = percentage >= 50;
 
                   return (
                     <tr
-                      key={item.id}
+                      key={`${item.id || item.course_id}-${item.submitted_at || idx}`}
                       className="hover:bg-gray-50/60 transition-colors"
                     >
                       <td className="py-4 px-6 font-bold text-gray-950">
